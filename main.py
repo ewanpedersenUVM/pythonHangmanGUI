@@ -1,4 +1,13 @@
 import tkinter as tk
-import tinytag as tt
+import pip
 
-def 
+try:
+    import tinytag as tt
+except ImportError:
+    pip.main(['install', 'tinytag'])
+    import tinytag as tt
+
+def my_function():
+    print("Hello World")
+    pass
+
