@@ -5,7 +5,7 @@ Programming Final
 """
 
 from tkinter import *
-import pygame
+from pygame import mixer
 import os
 
 root = Tk()
