@@ -13,8 +13,9 @@ def chooseWord():
         word = random.choice(words)
         wordList = ["_"] * len(word)
         return word, wordList
+
     
-def hangman(word, decision, input, incorrect_guesses):
+def hangman(word, wordlist, decision, input, incorrect_guesses):
 
   guess_letters = []
 
@@ -34,7 +35,7 @@ def hangman(word, decision, input, incorrect_guesses):
        print("Letter already guessed please try again")
     elif incorrect_guesses == 6:
       break
-  return incorrect_guesses
+  return incorrect_guesses, wl, guess_result
 
 class HangmanApp:
     def __init__(self, root):
@@ -44,10 +45,11 @@ class HangmanApp:
         # Text box
         self.text_box = tk.Entry(root, width=30)
         self.text_box.pack(pady=10)
-
-        # Buttons
         # button to start game and choose a random word
+        # Buttons to choose letter or word
         self.button0 = tk.Button(root, text="Start Game", command=self.button0_clicked)
+        self.button0.pack(side=tk.TOP, padx=5)
+
         self.button1 = tk.Button(root, text="Letter", command=self.button1_clicked)
         self.button1.pack(side=tk.LEFT, padx=5)
         
@@ -66,12 +68,15 @@ class HangmanApp:
         self.word_text.pack()
 
     def button0_clicked(self): # start button
-        hiddenWord = chooseWord()
+        global hiddenWord, wordlist, incorrect_guesses
+        hiddenWord, wordlist = chooseWord()
+        incorrect_guesses = 0
         self.update_image(0)
 
     def button1_clicked(self): # letter button
-        numberX = get_number(1)
-        self.update_image(numberX)
+        input = self.text_box.get()
+        incorrect_guesses = hangman(hiddenWord, wordlist, 'letter', input, incorrect_guesses)
+        self.update_image(incorrect_guesses)
 
     def button2_clicked(self): # word button
         self.update_image()
