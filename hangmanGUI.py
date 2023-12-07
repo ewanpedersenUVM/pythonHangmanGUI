@@ -1,85 +1,89 @@
 import tkinter as tk
-from tkinter import messagebox
+from PIL import Image, ImageTk
 import random
 
-class HangmanGame:
-    def __init__(self, master):
-        self.master = master
-        self.master.title("Hangman Game")
+def get_number(x):
+    # Replace the following line with your function to get a number between 0 and 6
+    return x+1
 
-        self.word = ""
-        self.guess_letters = []
-        self.incorrect_guesses = 0
+def chooseWord():
+    with open("wordlist.txt", "r") as file: 
+        allText = file.read() 
+        words = list(map(str, allText.split()))
+        word = random.choice(words)
+        wordList = ["_"] * len(word)
+        return word, wordList
+    
+def hangman(word, decision, input, incorrect_guesses):
 
-        # Create GUI elements
-        self.word_label = tk.Label(master, text="")
-        self.word_label.pack()
+  guess_letters = []
 
-        self.incorrect_label = tk.Label(master, text="")
-        self.incorrect_label.pack()
+  while incorrect_guesses < 6:
+    if decision == 'letter':
+      try:
+          index = word.index(input)
+          guess_letters.append(input)
+      except ValueError:
+            incorrect_guesses += 1
+    elif decision == 'word':
+      try:
+          index = word.index(input)
+      except ValueError:
+            incorrect_guesses += 1
+    elif input in guess_letters :
+       print("Letter already guessed please try again")
+    elif incorrect_guesses == 6:
+      break
+  return incorrect_guesses
 
-        self.guess_entry = tk.Entry(master)
-        self.guess_entry.pack()
+class HangmanApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Hangman GUI")
 
-        self.guess_button = tk.Button(master, text="Guess", command=self.make_guess)
-        self.guess_button.pack()
+        # Text box
+        self.text_box = tk.Entry(root, width=30)
+        self.text_box.pack(pady=10)
 
-        self.final_guess_button = tk.Button(master, text="Final Guess", command=self.final_guess)
-        self.final_guess_button.pack()
+        # Buttons
+        # button to start game and choose a random word
+        self.button0 = tk.Button(root, text="Start Game", command=self.button0_clicked)
+        self.button1 = tk.Button(root, text="Letter", command=self.button1_clicked)
+        self.button1.pack(side=tk.LEFT, padx=5)
+        
+        self.button2 = tk.Button(root, text="Word", command=self.button2_clicked)
+        self.button2.pack(side=tk.RIGHT, padx=5)
 
-        # Start the game
-        self.start_game()
+        # Hangman image
+        self.image_path = "images/Hangman_0.png"
+        self.img = Image.open(self.image_path)
+        self.img = ImageTk.PhotoImage(self.img)
+        self.img_label = tk.Label(root, image=self.img)
+        self.img_label.pack()
 
-    def start_game(self):
-        self.word = input("Enter a word: ")
-        self.update_display()
+        # Text showing the word with blanks and correct guesses
+        self.word_text = tk.Label(root, text="Word: ")
+        self.word_text.pack()
 
-    def update_display(self):
-        self.word_label.config(text=f"Word: {self.get_display_word()}")
-        self.incorrect_label.config(text=f"Incorrect guesses: {self.incorrect_guesses}")
+    def button0_clicked(self): # start button
+        hiddenWord = chooseWord()
+        self.update_image(0)
 
-    def get_display_word(self):
-        display_word = ""
-        for letter in self.word:
-            if letter in self.guess_letters:
-                display_word += letter
-            else:
-                display_word += "_"
-        return display_word
+    def button1_clicked(self): # letter button
+        numberX = get_number(1)
+        self.update_image(numberX)
 
-    def make_guess(self):
-        guess = self.guess_entry.get().lower()
+    def button2_clicked(self): # word button
+        self.update_image()
 
-        if guess in self.guess_letters:
-            messagebox.showinfo("Invalid Guess", "Letter already guessed. Please try again.")
-        else:
-            self.guess_letters.append(guess)
-            if guess in self.word:
-                messagebox.showinfo("Correct Guess", f"{guess} is in the word!")
-            else:
-                self.incorrect_guesses += 1
-                messagebox.showinfo("Incorrect Guess", f"{guess} is not in the word.")
-                if self.incorrect_guesses == 6:
-                    self.end_game("You lost!")
-
-        self.guess_entry.delete(0, tk.END)
-        self.update_display()
-
-    def final_guess(self):
-        final_guess = input("What is the word?").lower()
-        if final_guess == self.word:
-            self.end_game(f"You Win! and you had only {self.incorrect_guesses} incorrect guesses!")
-        else:
-            messagebox.showinfo("Incorrect Guess", f"Incorrect. You have {self.incorrect_guesses} incorrect guesses.")
-
-    def end_game(self, message):
-        messagebox.showinfo("Game Over", message)
-        self.master.destroy()
-
-def main():
-    root = tk.Tk()
-    hangman_game = HangmanGame(root)
-    root.mainloop()
+    def update_image(self, number):
+        # Replace the following line with your function to get a number between 0 and 6
+        image_path = f"images/Hangman_{number}.png"
+        self.img = Image.open(image_path)
+        self.img = ImageTk.PhotoImage(self.img)
+        self.img_label.configure(image=self.img)
 
 if __name__ == "__main__":
-    main()
+    root = tk.Tk()
+    app = HangmanApp(root)
+    root.mainloop()
