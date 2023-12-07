@@ -1,10 +1,3 @@
-"""
-Shamus Murphy
-Final Project
-"""
-
-import random
-
 def hangman(word, decision, input, incorrect_guesses):
 
   guess_letters = []
@@ -26,4 +19,3 @@ def hangman(word, decision, input, incorrect_guesses):
     elif incorrect_guesses == 6:
       break
   return incorrect_guesses
-
