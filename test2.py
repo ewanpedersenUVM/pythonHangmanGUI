@@ -1,53 +1,56 @@
 import random
+#w = word
+#wl = wordlist
+#ip = input
+#incorrect_guesses = ig
+wl = ["_", "_", "_", "_", "_"]
 
-wordlist = ["_", "_", "_", "_", "_"]
-
-def hangman_letter(word, wordlist, input, incorrect_guesses):
-    if len(input) != 1:
-        return incorrect_guesses, wordlist, False
-    splitWord = list(word)
+def hangman_letter(w, wl, ip, ig):
+    if len(ip) != 1:
+        return ig, wl, False
+    splitWord = list(w)
     result = None  # Initialize result variable outside the loop
 
-    while incorrect_guesses < 6:
+    while ig < 6:
         letter_found = False
         for index, letter in enumerate(splitWord):
-            if letter == input:
-                wordlist[index] = input
+            if letter == ip:
+                wl[index] = ip
                 letter_found = True
         if not letter_found:
-            incorrect_guesses += 1
+            ig += 1
 
-        if incorrect_guesses == 6:
+        if ig == 6:
             result = "lose"
             break
-        if input in word:
+        if ip in w:
             result = "yes"
-        if input in wordlist:
+        if ip in wl:
             result = "repeat"
 
         break  # Add a break statement to exit the loop
 
-    return incorrect_guesses, wordlist, result
+    return ig, wl, result
 
-result = hangman_letter('apple', wordlist, 'p', 0)
+result = hangman_letter('apple', wl, 'p', 0)
 print(result)
-print(wordlist)
+print(wl)
 
-def hangman_word(word, wordlist, input, incorrect_guesses):
+def hangman_word(w, wl, ip, ig):
     result = None  # Initialize result variable outside the loop
 
-    while incorrect_guesses < 6:
-        if input == word:
-            wordlist = list(word)
+    while ig < 6:
+        if ip == w:
+            wl = list(w)
             result = "yes"
         else:
-            incorrect_guesses += 1
+            ig += 1
             result = "lose"
 
         break  # Add a break statement to exit the loop
 
-    return incorrect_guesses, wordlist, result
+    return ig, wl, result
 
-result_word = hangman_word('apple', wordlist, 'apple', 0)
+result_word = hangman_word('apple', wl, 'apple', 0)
 print(result_word)
-print(wordlist)
+print(wl)
