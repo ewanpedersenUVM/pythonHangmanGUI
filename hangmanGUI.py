@@ -1,6 +1,10 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+from tkinter import messagebox
 import random
+
+global hiddenWord, wordlist, incorrect_guesses
+wordlist = []
 
 def get_number(x):
     # Replace the following line with your function to get a number between 0 and 6
@@ -15,27 +19,47 @@ def chooseWord():
         return word, wordList
 
     
-def hangman(word, wordlist, decision, input, incorrect_guesses):
+def hangman_letter(word, wordlist, input, incorrect_guesses):
+    if len(input) != 1:
+        return incorrect_guesses, wordlist, False
+    splitWord = list(word)
+    result = None  # Initialize result variable outside the loop
 
-  guess_letters = []
+    while incorrect_guesses < 6:
+        letter_found = False
+        for index, letter in enumerate(splitWord):
+            if letter == input:
+                wordlist[index] = input
+                letter_found = True
+        if not letter_found:
+            incorrect_guesses += 1
 
-  while incorrect_guesses < 6:
-    if decision == 'letter':
-      try:
-          index = word.index(input)
-          guess_letters.append(input)
-      except ValueError:
+        if incorrect_guesses == 6:
+            result = "lose"
+            break
+        if input in word:
+            result = "yes"
+        if input in wordlist:
+            result = "repeat"
+
+        break  # Add a break statement to exit the loop
+
+    return incorrect_guesses, wordlist, result
+
+def hangman_word(word, wordlist, input, incorrect_guesses):
+    result = None  # Initialize result variable outside the loop
+
+    while incorrect_guesses < 6:
+        if input == word:
+            wordlist = list(word)
+            result = "yes"
+        else:
             incorrect_guesses += 1
-    elif decision == 'word':
-      try:
-          index = word.index(input)
-      except ValueError:
-            incorrect_guesses += 1
-    elif input in guess_letters :
-       print("Letter already guessed please try again")
-    elif incorrect_guesses == 6:
-      break
-  return incorrect_guesses, wl, guess_result
+            result = "lose"
+
+        break  # Add a break statement to exit the loop
+
+    return incorrect_guesses, wordlist, result
 
 class HangmanApp:
     def __init__(self, root):
@@ -64,7 +88,7 @@ class HangmanApp:
         self.img_label.pack()
 
         # Text showing the word with blanks and correct guesses
-        self.word_text = tk.Label(root, text="Word: ")
+        self.word_text = tk.Label(root, text="Word: " + " ".join(wordlist))
         self.word_text.pack()
 
     def button0_clicked(self): # start button
@@ -72,21 +96,61 @@ class HangmanApp:
         hiddenWord, wordlist = chooseWord()
         incorrect_guesses = 0
         self.update_image(0)
+        self.update_word_text(wordlist)
 
     def button1_clicked(self): # letter button
-        input = self.text_box.get()
-        incorrect_guesses = hangman(hiddenWord, wordlist, 'letter', input, incorrect_guesses)
-        self.update_image(incorrect_guesses)
+        input = str(self.text_box.get())
+        incorrect_guesses, wordlist, result = hangman_letter(hiddenWord, wordlist, input, incorrect_guesses)
+        if result == "yes":
+            self.correct_message()
+        elif result == "no":
+            self.incorrect_message()
+        elif result == "repeat":
+            self.repeat_message()
+        self.update_image(int(incorrect_guesses))
+        self.update_word_text(wordlist)
 
     def button2_clicked(self): # word button
-        self.update_image()
+        input = str(self.text_box.get())
+        incorrect_guesses, wordlist, result = hangman_word(hiddenWord, wordlist, input, incorrect_guesses)
+        if result == "yes":
+            self.win_message()
+        elif result == "lose":
+            self.lose_message()
+        self.update_image(int(incorrect_guesses))
+        self.update_word_text(wordlist)
 
     def update_image(self, number):
-        # Replace the following line with your function to get a number between 0 and 6
         image_path = f"images/Hangman_{number}.png"
         self.img = Image.open(image_path)
         self.img = ImageTk.PhotoImage(self.img)
         self.img_label.configure(image=self.img)
+
+    # function to update text showing the word with blanks and correct guesses
+
+    def update_word_text(self, wordlist):
+        self.word_text.configure(text="Word: " + " ".join(wordlist))
+
+    #message boxes for all outcomes: win, lose, repeat, incorrect guess
+    def win_message(self):
+        messagebox.showinfo("Win", "You win! Would you like to add your name to the leaderboard?")
+        #add name to leaderboard
+        #display leaderboard
+
+    def lose_message(self):
+        messagebox.showinfo("Lose", "You lose!")
+#messagebox text input and button to add name to leaderboard, input name and incorrect guesses to function leaderboard(name, incorrect_guesses)
+
+
+    def repeat_message(self):
+        messagebox.showinfo("Repeat", "You've already guessed that letter!")
+
+    def incorrect_message(self):
+        messagebox.showinfo("Incorrect", "Incorrect letter!")
+
+    def correct_message(self):
+        messagebox.showinfo("Correct", "Correct letter!")
+
 
 if __name__ == "__main__":
     root = tk.Tk()
