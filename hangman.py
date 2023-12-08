@@ -1,21 +1,56 @@
-def hangman(word, decision, input, incorrect_guesses):
+import random
+#w = word
+#wl = wordlist
+#ip = input
+#incorrect_guesses = ig
+wl = ["_", "_", "_", "_", "_"]
 
-  guess_letters = []
+def hangman_letter(w, wl, ip, ig):
+    global wordlist
+    if len(ip) != 1:
+        return ig, wl, False
+    splitWord = list(w)
+    result = None  # Initialize result variable outside the loop
 
-  while incorrect_guesses < 6:
-    if decision == 'letter':
-      try:
-          index = word.index(input)
-          guess_letters.append(input)
-      except ValueError:
-            incorrect_guesses += 1
-    elif decision == 'word':
-      try:
-          index = word.index(input)
-      except ValueError:
-            incorrect_guesses += 1
-    elif input in guess_letters :
-       print("Letter already guessed please try again")
-    elif incorrect_guesses == 6:
-      break
-  return incorrect_guesses
+    letter_found = False
+    if ip in wl:
+        result = "repeat"
+    for index, letter in enumerate(splitWord):
+        if letter == ip:
+            wl[index] = ip
+            letter_found = True
+    if not letter_found:
+            ig += 1
+    elif ip not in w:
+        result = "no"
+    elif ip in w:
+        result = "yes"
+
+    elif ig == 6:
+        result = "lose"
+
+    return ig, wl, result
+
+result = hangman_letter('apple', wl, 'p', 0)
+print(result)
+print(wl)
+
+def hangman_word(w, wl, ip, ig):
+    global wordlist
+    result = None  # Initialize result variable outside the loop
+
+    while ig < 6:
+        if ip == w:
+            wl = list(w)
+            result = "yes"
+        else:
+            ig += 1
+            result = "no"
+
+        break  # Add a break statement to exit the loop
+
+    return ig, wl, result
+
+result_word = hangman_word('apple', wl, 'apple', 0)
+print(result_word)
+print(wl)
