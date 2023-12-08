@@ -1,5 +1,8 @@
 # HANGMAN GAME
 Hangman Python Game with GUI
+## Project Members
+Ewan Pedersen\
+Shamus Murphy
 
 ## Imports:
 > pillow\
