@@ -3,6 +3,8 @@ import random
 wordlist = ["_", "_", "_", "_", "_"]
 
 def hangman_letter(word, wordlist, input, incorrect_guesses):
+    if len(input) != 1:
+        return incorrect_guesses, wordlist, False
     splitWord = list(word)
     result = None  # Initialize result variable outside the loop
 
@@ -12,7 +14,6 @@ def hangman_letter(word, wordlist, input, incorrect_guesses):
             if letter == input:
                 wordlist[index] = input
                 letter_found = True
-
         if not letter_found:
             incorrect_guesses += 1
 
