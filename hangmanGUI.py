@@ -1,3 +1,10 @@
+"""
+Ewan Pedersen, Shamus Murphy
+CS1210 - F
+Final Project
+"""
+
+
 import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import messagebox
@@ -136,7 +143,7 @@ class HangmanApp:
     def button1_clicked(self): # letter button
         global hiddenWord, wordlist, incorrect_guesses, letterList
         input = str(self.text_box.get())
-        incorrect_guesses, wordlist, result, letterList = hangman_letter(hiddenWord, wordlist, input, incorrect_guesses, letterList)
+        incorrect_guesses, wordlist, result, letterList = hangman_letter(hiddenWord, wordlist, input.lower(), incorrect_guesses, letterList)
         if result == "yes":
             self.correct_message()
         elif result == "no":
@@ -153,7 +160,7 @@ class HangmanApp:
         global hiddenWord, wordlist, incorrect_guesses, letterList
         global name
         input = str(self.text_box.get())
-        incorrect_guesses, wordlist, result = hangman_word(hiddenWord, wordlist, input, incorrect_guesses)
+        incorrect_guesses, wordlist, result = hangman_word(hiddenWord, wordlist, input.lower(), incorrect_guesses)
         if result == "yes":
             self.win_message()
             leaderboard(name, incorrect_guesses)
