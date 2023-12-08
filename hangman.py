@@ -3,8 +3,9 @@ import random
 #wl = wordlist
 #ip = input
 #incorrect_guesses = ig
+#ll = letter list
 wl = ["_", "_", "_", "_", "_"]
-
+ll = []
 def hangman_letter(w, wl, ip, ig):
     global wordlist
     if len(ip) != 1:
@@ -20,15 +21,14 @@ def hangman_letter(w, wl, ip, ig):
             wl[index] = ip
             letter_found = True
     if not letter_found:
-            ig += 1
-    elif ip not in w:
-        result = "no"
+          ig += 1
+          result = "no"
+          ll.append(ip)
     elif ip in w:
         result = "yes"
-
+        ll.append(ip)
     elif ig == 6:
         result = "lose"
-
     return ig, wl, result
 
 result = hangman_letter('apple', wl, 'p', 0)
